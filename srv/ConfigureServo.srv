@@ -1,0 +1,23 @@
+uint8 servo_id
+uint8 configuration
+uint8 CONFIGURATION_CURRENT = 0
+uint8 CONFIGURATION_SET_DEFAULT = 1
+uint8 CONFIGURATION_SET_EEPROM = 2
+uint8 CONFIGURATION_SET_NEW = 3
+uint8 CONFIGURATION_ENFORCE_LIMITS = 4
+uint8 CONFIGURATION_STORE_IN_EEPROM = 8
+uint16 pulse_width_minimum
+uint16 puls_e_width_maximum
+uint16 pulse_width_center
+uint16 pulse_width_initial
+---
+uint8 servo_id
+uint8 status
+uint8 STATUS_IS_CONFIGURED = 1
+uint8 STATUS_IS_CUSTOM = 2
+uint8 STATUS_LIMITS_ENFORCED = 4
+uint8 STATUS_IS_STORED_IN_EEPROM = 8
+uint16 pulse_width_minimum
+uint16 pulse_width_maximum
+uint16 pulse_width_center
+uint16 pulse_width_initial

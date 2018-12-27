@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package format="2">
+
+  <name>ros_servo_controller</name>
+  <version>0.0.0</version>
+  <description>Rosserial servo controller node</description>
+
+  <license>MIT</license>
+
+  <maintainer email="maarten@vijfendertig.be">Maarten De Munck</maintainer>
+  <author email="maarten@vijfendertig.be">Maarten De Munck</author>
+
+  <url type="repository">https://github.com/Vijfendertig/ros_servo_controller</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>message_generation</build_depend>
+  <exec_depend>message_runtime</exec_depend>
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>rosserial_arduino</depend>
+  <depend>rosserial_client</depend>
+
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+  </export>
+
+</package>
