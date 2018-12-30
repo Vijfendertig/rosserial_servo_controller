@@ -22,5 +22,4 @@ void setup()
 void loop()
 {
   node_handle.spinOnce();
-  servo_controller.spinOnce();
 }

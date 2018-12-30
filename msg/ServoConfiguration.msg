@@ -1,0 +1,5 @@
+uint16 pulse_width_minimum
+uint16 pulse_width_maximum
+bool enforce_pulse_width_limits
+uint16 pulse_width_center
+uint16 pulse_width_initial
