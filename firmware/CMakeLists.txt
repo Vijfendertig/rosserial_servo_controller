@@ -27,7 +27,7 @@ link_directories(
 
 generate_arduino_firmware(arduino_micro
   SRCS arduino_micro_servo_controller_node.cpp
-       ros_servo_controller.cpp
+       configured_servo.cpp
        ${ARDUINO_SDK_PATH}/libraries/Servo/src/avr/Servo.cpp
        ${ROS_LIB_DIR}/time.cpp
   ARDLIBS Servo

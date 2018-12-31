@@ -3,7 +3,7 @@
 
 
 #include "arduino_micro_ros.h"
-#include <Servo.h>
+#include "configured_servo.hpp"
 #include <ros_servo_controller/ControlServo.h>
 #include <ros_servo_controller/ControlServoRaw.h>
 #include <ros_servo_controller/ServoConfiguration.h>
@@ -11,34 +11,6 @@
 
 
 namespace ros_servo_controller {
-
-  class ConfiguredServo {
-    private:
-      static constexpr uint16_t default_pulse_width_minimum_{1000U};
-      static constexpr uint16_t default_pulse_width_maximum_{2000U};
-      static constexpr bool default_enforce_pulse_width_limits_{true};
-      static constexpr uint16_t default_pulse_width_center_{1500U};
-      static constexpr uint16_t default_pulse_width_initial_{1500U};
-      uint8_t pin_number_;
-      Servo servo_;
-      uint16_t pulse_width_minimum_;
-      uint16_t pulse_width_maximum_;
-      bool enforce_pulse_width_limits_;
-      uint16_t pulse_width_center_;
-      uint16_t pulse_width_initial_;
-      uint16_t pulse_width_current_;
-    public:
-      ConfiguredServo(uint8_t pin_number);
-      ~ConfiguredServo();
-      void setup();
-      void setPosition(int16_t position);
-      void setPulseWidth(uint16_t pulse_width);
-      void setDefaultConfiguration();
-      void setConfiguration(const ServoConfiguration & configuration);
-    private:
-      uint16_t correctPulseWidth(uint16_t pulse_width_requested) const;
-  };
-
 
   template <int ...pin_numbers>
   class RosServoController {
@@ -50,6 +22,13 @@ namespace ros_servo_controller {
       ros::Subscriber<ControlServo, RosServoController> control_subscriber_;
       ros::Subscriber<ControlServoRaw, RosServoController> control_raw_subscriber_;
       ros::Subscriber<ConfigureServo, RosServoController> configure_subscriber_;
+      struct StoredConfiguration {
+        uint8_t signature_front;
+        ConfiguredServo::Configuration configuration;
+        uint8_t signature_rear;
+      };
+      static constexpr uint16_t configuration_base_address_ = 0U;
+      static constexpr uint8_t configuration_signature_ = 31U;  // Just a random constant...
     public:  // Member functions.
       RosServoController(ros::NodeHandle * node_handle);
       ~RosServoController() = default;
@@ -58,6 +37,8 @@ namespace ros_servo_controller {
       void controlCallback(const ControlServo & message);
       void controlRawCallback(const ControlServoRaw & message);
       void configureCallback(const ConfigureServo & message);
+      bool loadConfigurationFromEeprom(uint16_t address, ConfiguredServo::Configuration & configuration);
+      void saveConfigurationToEeprom(uint16_t address, const ConfiguredServo::Configuration & configuration);
   };
 
 
@@ -113,16 +94,44 @@ namespace ros_servo_controller {
         servos_[message.servo_id].setDefaultConfiguration();
       }
       else if((message.command & ConfigureServo::COMMAND_PARAMETERS) == ConfigureServo::COMMAND_PARAMETERS_EEPROM) {
-        ;  // TODO: get configuration from EEPROM.
+        ConfiguredServo::Configuration configuration;
+        if(loadConfigurationFromEeprom(configuration_base_address_ + message.servo_id * sizeof(StoredConfiguration),
+               configuration)) {
+          servos_[message.servo_id].setConfiguration(configuration);
+        }
+        else {  // No configuration found, use the default configuration.
+          servos_[message.servo_id].setDefaultConfiguration();
+        }
       }
       else if((message.command & ConfigureServo::COMMAND_PARAMETERS) == ConfigureServo::COMMAND_PARAMETERS_NEW) {
-        servos_[message.servo_id].setConfiguration(message.configuration);
+        ConfiguredServo::Configuration configuration;
+        configuration.pin_number = pin_numbers_[message.servo_id];
+        configuration.pulse_width_minimum = message.configuration.pulse_width_minimum;
+        configuration.pulse_width_maximum = message.configuration.pulse_width_maximum;
+        configuration.enforce_pulse_width_limits = message.configuration.enforce_pulse_width_limits;
+        configuration.pulse_width_center = message.configuration.pulse_width_center;
+        configuration.pulse_width_initial = message.configuration.pulse_width_initial;
+        servos_[message.servo_id].setConfiguration(configuration);
       }
       // Store new configuration parameters in EEPROM if requested.
       if(message.command & ConfigureServo::COMMAND_STORE_IN_EEPROM) {
-        ;  // TODO: store configuration in EEPROM.
+        auto configuration = servos_[message.servo_id].getConfiguration();
+        saveConfigurationToEeprom(configuration_base_address_ + message.servo_id * sizeof(StoredConfiguration),
+            configuration);
       }
     }
+  }
+
+  template<int ...pin_numbers>
+  bool RosServoController<pin_numbers...>::loadConfigurationFromEeprom(uint16_t address,
+      ConfiguredServo::Configuration & configuration) {
+    return false;
+  }
+
+  template<int ...pin_numbers>
+  void RosServoController<pin_numbers...>::saveConfigurationToEeprom(uint16_t address,
+      const ConfiguredServo::Configuration & configuration) {
+    ;
   }
 
 }

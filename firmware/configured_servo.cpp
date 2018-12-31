@@ -40,10 +40,10 @@ namespace ros_servo_controller {
       pulse_width_current_ = pulse_width_maximum_;
     }
     else if(position < 0) {
-      pulse_width_current_ = pulse_width_center_ + int32_t(pulse_width_center_ - pulse_width_minimum_) * position / 1000;
+      pulse_width_current_ = pulse_width_center_ + int16_t(pulse_width_center_ - pulse_width_minimum_) * position / 1000;
     }
     else {  // position > 0)
-      pulse_width_current_ = pulse_width_center_ + int32_t(pulse_width_maximum_ - pulse_width_center_) * position / 1000;
+      pulse_width_current_ = pulse_width_center_ + int16_t(pulse_width_maximum_ - pulse_width_center_) * position / 1000;
     }
     servo_.writeMicroseconds(pulse_width_current_);
   }
@@ -67,7 +67,7 @@ namespace ros_servo_controller {
   }
 
 
-  void ConfiguredServo::setConfiguration(const ServoConfiguration & configuration) {
+  void ConfiguredServo::setConfiguration(const ConfiguredServo::Configuration & configuration) {
     pulse_width_minimum_ = configuration.pulse_width_minimum;
     pulse_width_maximum_ = configuration.pulse_width_maximum;
     enforce_pulse_width_limits_ = configuration.enforce_pulse_width_limits;
@@ -76,6 +76,18 @@ namespace ros_servo_controller {
     if(enforce_pulse_width_limits_) {
       setPulseWidth(pulse_width_current_);
     }
+  }
+
+
+  ConfiguredServo::Configuration ConfiguredServo::getConfiguration() {
+    Configuration configuration;
+    configuration.pin_number = pin_number_;
+    configuration.pulse_width_minimum = pulse_width_minimum_;
+    configuration.pulse_width_maximum = pulse_width_maximum_;
+    configuration.enforce_pulse_width_limits = enforce_pulse_width_limits_;
+    configuration.pulse_width_center = pulse_width_center_;
+    configuration.pulse_width_initial = pulse_width_initial_;
+    return configuration;
   }
 
 
