@@ -35,6 +35,7 @@ namespace ros_servo_controller {
       ConfiguredServo(uint8_t pin_number);
       ~ConfiguredServo();
       void setup();
+      void setup(const Configuration & configuration);
       void setPosition(int16_t position);
       void setPulseWidth(uint16_t pulse_width);
       void setDefaultConfiguration();

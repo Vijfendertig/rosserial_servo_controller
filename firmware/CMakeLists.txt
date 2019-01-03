@@ -14,7 +14,7 @@ include_directories(
   ${ARDUINO_SDK_PATH}/hardware/arduino/avr/libraries
   ${ARDUINO_SDK_PATH}/libraries
   ${ARDUINO_SDK_PATH}/libraries/Servo/src
-  #/opt/arduino-1.8.8/libraries/Servo/src/Servo.h
+  ${ARDUINO_SDK_PATH}/hardware/arduino/avr/libraries/EEPROM/src
   ${ROS_LIB_DIR}
 )
 
@@ -30,7 +30,7 @@ generate_arduino_firmware(arduino_micro
        configured_servo.cpp
        ${ARDUINO_SDK_PATH}/libraries/Servo/src/avr/Servo.cpp
        ${ROS_LIB_DIR}/time.cpp
-  ARDLIBS Servo
+  ARDLIBS EEPROM Servo
   BOARD micro
   PROGRAMMER arduinoisp
   PORT /dev/ttyACM0

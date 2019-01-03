@@ -25,7 +25,18 @@ namespace ros_servo_controller {
 
   void ConfiguredServo::setup() {
     servo_.attach(pin_number_);
-    servo_.writeMicroseconds(pulse_width_initial_);
+    setPulseWidth(pulse_width_initial_);
+  }
+
+
+  void ConfiguredServo::setup(const Configuration & configuration) {
+    pulse_width_minimum_ = configuration.pulse_width_minimum;
+    pulse_width_maximum_ = configuration.pulse_width_maximum;
+    enforce_pulse_width_limits_ = configuration.enforce_pulse_width_limits;
+    pulse_width_center_ = configuration.pulse_width_center;
+    pulse_width_initial_ = configuration.pulse_width_initial;
+    servo_.attach(pin_number_);
+    setPulseWidth(pulse_width_initial_);
   }
 
 
